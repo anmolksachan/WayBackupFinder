@@ -46,47 +46,57 @@ def load_domains_from_file(file_path):
         print(colored(f"{file_path} not found. Exiting.", "red"))
         exit()
 
-# Fetch URLs using The Wayback Machine API
+# Fetch URLs using The Wayback Machine API with streaming and backoff
 def fetch_urls(target, file_extensions):
     print(f"\nFetching URLs from The Time Machine Lite for {target}...")
-    archive_url = f'https://web.archive.org/cdx/search/cdx?url=*.{target}/*&output=txt&fl=original&collapse=urlkey'
+    archive_url = f'https://web.archive.org/cdx/search/cdx?url=*.{target}/*&output=txt&fl=original&collapse=urlkey&page=/'
 
     global stop_loader
     stop_loader = False
     loader_thread = Thread(target=loader_animation, args=("Fetching URLs...",))
     loader_thread.start()
 
-    try:
-        response = requests.get(archive_url)
-        response.raise_for_status()
-        url_list = response.text.splitlines()
-        print(colored(f"\nFetched {len(url_list)} URLs from archive.", "green"))
-    except Exception as e:
-        print(colored(f"\nError fetching URLs: {e}", "red"))
-        return []
-    finally:
-        stop_loader = True
-        loader_thread.join()
+    max_retries = 3  # Maximum number of retries
+    retry_delay = 5  # Delay between retries (in seconds)
+    attempt = 0
 
-    print("\nFiltering URLs by file extensions...")
-    extension_stats = {ext: [] for ext in file_extensions}
+    while attempt < max_retries:
+        try:
+            with requests.get(archive_url, stream=True, timeout=60) as response:  # Stream the response
+                response.raise_for_status()
+                print(colored("\nStreaming response from archive...", "green"))
 
-    for url in url_list:
-        for ext in file_extensions:
-            if url.lower().endswith(ext.lower()):
-                extension_stats[ext].append(url)
+                url_list = []
+                total_lines = 0
+                for line in response.iter_lines(decode_unicode=True):  # Process each line incrementally
+                    if line:
+                        url_list.append(line)
+                        total_lines += 1
+                        if total_lines % 1000 == 0:  # Show progress every 1000 lines
+                            print(f"\rFetched {total_lines} URLs...", end="")
 
-    for ext, urls in extension_stats.items():
-        if urls:
-            print(f"Extension {ext} found: {len(urls)} URLs")
-
-    return extension_stats
+                print(colored(f"\nFetched {total_lines} URLs from archive.", "green"))
+                stop_loader = True
+                loader_thread.join()
+                return {ext: [url for url in url_list if url.lower().endswith(ext.lower())] for ext in file_extensions}
+        except requests.exceptions.RequestException as e:
+            attempt += 1
+            if attempt < max_retries:
+                print(colored(f"\nAttempt {attempt} failed: {e}. Retrying in {retry_delay} seconds...", "yellow"))
+                time.sleep(retry_delay)
+            else:
+                print(colored(f"\nError fetching URLs after {max_retries} attempts: {e}", "red"))
+                print(colored("The server may be rate-limiting or refusing connections.", "yellow"))
+                print(colored("Pausing for 5 minutes before continuing...", "yellow"))
+                time.sleep(300)  # Sleep for 5 minutes (300 seconds)
+                print(colored("Resuming...", "green"))
+                return {}  # Return an empty dictionary after backoff
 
 # Check for archived snapshots
 def check_wayback_snapshot(url):
     wayback_url = f'https://archive.org/wayback/available?url={url}'
     try:
-        response = requests.get(wayback_url)
+        response = requests.get(wayback_url, timeout=30)
         response.raise_for_status()
         data = response.json()
         if "archived_snapshots" in data and "closest" in data["archived_snapshots"]:
@@ -115,6 +125,9 @@ def save_urls(target, extension_stats, file_suffix="_filtered_urls.txt"):
 # Process domain
 def process_domain(target, file_extensions):
     extension_stats = fetch_urls(target, file_extensions)
+    if not extension_stats:  # Ensure extension_stats is not empty
+        print(colored(f"No URLs fetched for {target}. Skipping...", "yellow"))
+        return
     all_filtered_urls = save_urls(target, extension_stats)
     for url in all_filtered_urls:
         check_wayback_snapshot(url)
