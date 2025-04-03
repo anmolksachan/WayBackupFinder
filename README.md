@@ -7,6 +7,9 @@ This Python script fetches URLs from the Wayback Machine and filters them based 
 Read more: <a href="https://anmolksachan.medium.com/unlock-hidden-backups-with-waybackupfinder-py-7b98041a82d9" target="_blank">Medium</a><br>
 Watch Tool in action: <a href="https://anmolksachan.medium.com/discovering-backups-secrets-and-more-using-the-waybackupfinder-py-tool-b97f67e95c50">Medium</a>
 
+Community Blogs:<br>
+<a href="https://medium.com/@abhirupkonwar04/waybackupfinder-passive-recon-65a49dff050b">WayBackupFinder Passive Recon</a><br>
+
 ## Features
 
 - Fetches URLs from the Wayback Machine using the CDX API.
