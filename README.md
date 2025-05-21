@@ -90,7 +90,8 @@ The script will create a folder called `content` and store the filtered URLs for
 
 ### Community Resources
 
-<a href='https://www.youtube.com/watch?v=wgLvT5sWV6E'>🌐 𝐖𝐄𝐁 𝐏𝐄𝐍𝐓𝐄𝐒𝐓𝐈𝐍𝐆 - "𝕎𝔸𝕐𝔹𝔸ℂ𝕂𝕌ℙ 𝔽𝕀ℕ𝔻𝔼ℝ" [ 𝐇𝐨𝐰 𝐭𝐨 𝐅𝐢𝐧𝐝 𝐋𝐞𝐚𝐤𝐞𝐝 𝐁𝐚𝐜𝐤𝐮𝐩 𝐅𝐢𝐥𝐞𝐬 𝐮𝐬𝐢𝐧𝐠 𝐰𝐚𝐲𝐛𝐚𝐜𝐤𝐮𝐩 𝐟𝐢𝐧𝐝𝐞𝐫 ] 🔍</a>
+- <a href='https://www.youtube.com/watch?v=wgLvT5sWV6E'>🌐 𝐖𝐄𝐁 𝐏𝐄𝐍𝐓𝐄𝐒𝐓𝐈𝐍𝐆 - "𝕎𝔸𝕐𝔹𝔸ℂ𝕂𝕌ℙ 𝔽𝕀ℕ𝔻𝔼ℝ" [ 𝐇𝐨𝐰 𝐭𝐨 𝐅𝐢𝐧𝐝 𝐋𝐞𝐚𝐤𝐞𝐝 𝐁𝐚𝐜𝐤𝐮𝐩 𝐅𝐢𝐥𝐞𝐬 𝐮𝐬𝐢𝐧𝐠 𝐰𝐚𝐲𝐛𝐚𝐜𝐤𝐮𝐩 𝐟𝐢𝐧𝐝𝐞𝐫 ] 🔍</a>
+- <a href='https://osintteam.blog/waybackupfinder-passive-recon-65a49dff050b'>WayBackupFinder Passive Recon</a>
 
 ## License
 
